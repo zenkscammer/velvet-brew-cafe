@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Admin | Velvet Brew</title>
+  <style>
+    :root {
+      --bg: #f7f0ea;
+      --panel: #fffdfb;
+      --primary: #7d3f2a;
+      --primary-dark: #512d1f;
+      --accent: #d8a36b;
+      --accent-soft: #f5e0c1;
+      --brown: #3a2d2a;
+      --text: #2a201d;
+      --muted: #6a524c;
+      --line: #eadbcc;
+      --success: #2d7d50;
+      --warning: #9e6a15;
+      --danger: #a43a2b;
+      --shadow: 0 18px 32px rgba(62, 38, 30, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #fffaf5 0%, #f6efe9 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+
+    .container {
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 250, 245, 0.82);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(234, 219, 204, 0.9);
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.28s ease;
+      transform: translateY(0);
+    }
+
+    .topbar.compact {
+      background: rgba(255, 248, 242, 0.94);
+      border-bottom-color: rgba(214, 194, 180, 0.8);
+      box-shadow: 0 8px 18px rgba(54, 34, 28, 0.05);
+    }
+
+    .topbar.hidden {
+      transform: translateY(-120%);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 76px;
+      gap: 20px;
+      transition: min-height 0.25s ease, padding 0.25s ease;
+    }
+
+    .topbar.compact .nav {
+      min-height: 60px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--brown);
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), #a55d34);
+      color: white;
+      font-weight: 800;
+      transition: width 0.25s ease, height 0.25s ease, font-size 0.25s ease;
+    }
+
+    .topbar.compact .brand-mark {
+      width: 34px;
+      height: 34px;
+      font-size: 0.85rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-weight: 700;
+      transition: gap 0.25s ease, font-size 0.25s ease;
+    }
+
+    .topbar.compact .nav-links {
+      gap: 18px;
+      font-size: 0.95rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease, padding 0.25s ease, font-size 0.25s ease;
+    }
+
+    .topbar.compact .btn {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #9f522f);
+      color: white;
+      box-shadow: 0 16px 26px rgba(125, 63, 42, 0.2);
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--primary);
+    }
+
+    .page {
+      padding: 28px 0 42px;
+    }
+
+    .headline {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .headline h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 3vw, 3.2rem);
+      letter-spacing: -0.05em;
+      color: var(--brown);
+    }
+
+    .headline p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(180deg, #fffdfb 0%, #f8f1ea 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 8px 16px rgba(62, 38, 30, 0.04);
+      min-height: 70px;
+    }
+
+    .summary-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #f5e0c1, #f7e7d9);
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .summary-item .meta {
+      min-width: 0;
+    }
+
+    .summary-item .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.56rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .summary-item strong {
+      display: block;
+      color: var(--brown);
+      font-size: 1.08rem;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
+    }
+
+    .summary-item small {
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card,
+    .panel,
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      padding: 14px 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      min-height: 96px;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 28px rgba(62, 38, 30, 0.08);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      margin-top: 10px;
+      font-size: clamp(1.5rem, 2vw, 2.1rem);
+      font-weight: 800;
+      color: var(--brown);
+      letter-spacing: -0.04em;
+    }
+
+    .stat-trend {
+      margin-top: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      color: var(--brown);
+      font-size: 1.5rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .pill.success {
+      background: #eaf6ee;
+      border-color: #bce1c8;
+      color: var(--success);
+    }
+
+    .pill.warning {
+      background: #fff4dc;
+      border-color: #f1d38a;
+      color: var(--warning);
+    }
+
+    .pill.danger {
+      background: #fde7e5;
+      border-color: #ecb2a9;
+      color: var(--danger);
+    }
+
+    .table-wrap {
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(247, 240, 234, 0.7);
+    }
+
+    td {
+      color: var(--text);
+      font-size: 0.82rem;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .status.confirmed {
+      background: #eaf6ee;
+      border-color: #bce1c8;
+      color: var(--success);
+    }
+
+    .status.pending {
+      background: #fff4dc;
+      border-color: #f1d38a;
+      color: var(--warning);
+    }
+
+    .status.canceled {
+      background: #fde7e5;
+      border-color: #ecb2a9;
+      color: var(--danger);
+    }
+
+    .action-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      padding: 6px 8px;
+      border-radius: 9px;
+      font-size: 0.64rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mini-btn.confirm { border-color: #bfe3ca; color: var(--success); }
+    .mini-btn.pending { border-color: #f1d38a; color: var(--warning); }
+    .mini-btn.cancel { border-color: #e7b2aa; color: var(--danger); }
+    .mini-btn.delete { background: #fff5f4; color: var(--danger); }
+
+    .aside-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .mini-card {
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #fffaf6 0%, #f7efe8 100%);
+      border: 1px solid var(--line);
+    }
+
+    .mini-card h3 {
+      margin: 0 0 10px;
+      color: var(--brown);
+      font-size: 1.05rem;
+    }
+
+    .mini-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .occupancy-meter {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: #f2e5d7;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .occupancy-fill {
+      height: 100%;
+      width: 64%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #9ec7a8, #d89b5c);
+    }
+
+    .legend {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    input, select {
+      width: 100%;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: var(--text);
+    }
+
+    @media (max-width: 980px) {
+      .summary-strip,
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .nav-links,
+      .nav-actions .btn-secondary {
+        display: none;
+      }
+
+      .nav {
+        min-height: 62px;
+        padding: 8px 0;
+      }
+
+      .topbar.compact .nav {
+        min-height: 54px;
+      }
+
+      .headline {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .summary-strip,
+      .stats-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .summary-item {
+        min-height: 64px;
+        padding: 7px 6px;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .summary-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+      }
+
+      .summary-item .meta {
+        text-align: center;
+      }
+
+      .summary-item .label {
+        font-size: 0.45rem;
+      }
+
+      .summary-item strong {
+        font-size: 0.82rem;
+      }
+
+      .summary-item small {
+        font-size: 0.48rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        padding: 10px 8px;
+        min-height: 74px;
+        text-align: center;
+      }
+
+      .stat-label {
+        font-size: 0.47rem;
+        letter-spacing: 0.05em;
+      }
+
+      .stat-value {
+        font-size: 0.96rem;
+        margin-top: 6px;
+      }
+
+      .stat-trend {
+        font-size: 0.5rem;
+        margin-top: 4px;
+      }
+
+      .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .table-wrap {
+        overflow: visible;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      th,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: grid;
+        gap: 12px;
+      }
+
+      tr {
+        background: #fffaf6;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 6px 18px rgba(62, 39, 24, 0.04);
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border: none;
+        padding: 8px 0;
+        font-size: 0.88rem;
+      }
+
+      td::before {
+        content: attr(data-label);
+        font-size: 0.68rem;
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        flex: 0 0 38%;
+      }
+
+      td:last-child {
+        padding-bottom: 0;
+      }
+
+      .action-group {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .mini-btn {
+        padding: 7px 9px;
+        font-size: 0.64rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <div class="brand-mark">V</div>
+        <span>Velvet Brew</span>
+      </div>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#reserve">Reservasi</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-secondary" onclick="location.href='index.html'">Halaman Utama</button>
+        <button class="btn btn-primary" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="headline">
+        <div>
+          <h1>Dashboard Admin</h1>
+          <p>Kelola reservasi, status meja, dan kondisi lokasi hari ini.</p>
+        </div>
+      </div>
+
+      <section class="summary-strip" aria-label="Ringkasan cepat dashboard">
+        <article class="summary-item">
+          <div class="summary-icon">⏱</div>
+          <div class="meta">
+            <span class="label">Hari ini</span>
+            <strong id="todayCount">0</strong>
+            <small>reservasi</small>
+          </div>
+        </article>
+        <article class="summary-item">
+          <div class="summary-icon">🔥</div>
+          <div class="meta">
+            <span class="label">Peak hour</span>
+            <strong>18:30</strong>
+            <small>terpadat</small>
+          </div>
+        </article>
+        <article class="summary-item">
+          <div class="summary-icon">✓</div>
+          <div class="meta">
+            <span class="label">Check-in</span>
+            <strong id="confirmedCount">0</strong>
+            <small>terkonfirmasi</small>
+          </div>
+        </article>
+        <article class="summary-item">
+          <div class="summary-icon">👥</div>
+          <div class="meta">
+            <span class="label">Rata-rata</span>
+            <strong id="avgGuests">0</strong>
+            <small>orang</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="stats-grid" aria-label="Statistik utama dashboard">
+        <article class="stat-card">
+          <div class="stat-label">Total reservasi</div>
+          <div class="stat-value" id="totalReservations">0</div>
+          <div class="stat-trend">Auto saved</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">Meja tersedia</div>
+          <div class="stat-value" id="availableSeats">0</div>
+          <div class="stat-trend">Live status</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">Menunggu</div>
+          <div class="stat-value" id="pendingConfirm">0</div>
+          <div class="stat-trend">Perlu aksi</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">Keramaian</div>
+          <div class="stat-value" id="occupancyPercent">0%</div>
+          <div class="stat-trend">Lokasi</div>
+        </article>
+      </section>
+
+      <section class="dashboard">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Daftar reservasi</h2>
+            <span class="pill success">Live</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Waktu</th>
+                  <th>Orang</th>
+                  <th>Acara</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="reservationTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="aside-stack">
+          <div class="panel mini-card">
+            <h3>Ringkasan lokasi</h3>
+            <p id="occupancySummary">Lokasi saat ini masih dalam kondisi normal.</p>
+            <div class="occupancy-meter">
+              <div class="occupancy-fill" id="occupancyFill"></div>
+            </div>
+            <div class="legend">
+              <span id="usedSeatsLabel">0/25 terisi</span>
+              <span id="occupancyLabel">0%</span>
+            </div>
+          </div>
+
+          <div class="panel mini-card">
+            <h3>Tambah reservasi</h3>
+            <form id="reservationForm">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="newName">Nama</label>
+                  <input id="newName" type="text" placeholder="Nama pelanggan" required />
+                </div>
+
+                <div class="field">
+                  <label for="newGuests">Jumlah</label>
+                  <select id="newGuests">
+                    <option value="2">2 Orang</option>
+                    <option value="4" selected>4 Orang</option>
+                    <option value="6">6 Orang</option>
+                    <option value="8">8 Orang</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="newTime">Jam</label>
+                  <input id="newTime" type="time" value="12:30" required />
+                </div>
+
+                <div class="field">
+                  <label for="newStatus">Status</label>
+                  <select id="newStatus">
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Canceled">Canceled</option>
+                  </select>
+                </div>
+
+                <div class="field full">
+                  <label for="newOccasion">Acara</label>
+                  <input id="newOccasion" type="text" value="Meeting ringan" required />
+                </div>
+
+                <div class="field full">
+                  <button type="submit" class="btn btn-primary" style="width:100%;">Tambah Reservasi</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const sessionKey = 'velvetAdminAuth';
+    const storageKey = 'velvetReservations';
+    const SHEET_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwL6x1THPo3X4imCY7Rsa4vvzGxr8n01zbItbwoVkLwHAZS6gFWwXCdVsCxg4OL-6rv/exec';
+
+    if (localStorage.getItem(sessionKey) !== 'true') {
+      window.location.href = 'admin-login.html';
+    }
+
+    const defaultReservations = [
+      { name: 'Aisha Rahma', time: '12:30', guests: 4, occasion: 'Meeting ringan', status: 'Confirmed' },
+      { name: 'Rizki Putra', time: '13:00', guests: 2, occasion: 'Date night', status: 'Pending' },
+      { name: 'Nadia Amel', time: '15:30', guests: 6, occasion: 'Family time', status: 'Confirmed' },
+      { name: 'Dimas Wibowo', time: '17:00', guests: 8, occasion: 'Birthday', status: 'Pending' },
+      { name: 'Sari Melati', time: '18:30', guests: 4, occasion: 'Coffee chat', status: 'Confirmed' },
+      { name: 'Fahri', time: '20:00', guests: 2, occasion: 'Casual hangout', status: 'Canceled' }
+    ];
+
+    let reservations = JSON.parse(localStorage.getItem(storageKey)) || defaultReservations;
+
+    const tableBody = document.getElementById('reservationTable');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const reservationForm = document.getElementById('reservationForm');
+    const topbar = document.querySelector('.topbar');
+    let lastScrollY = window.scrollY;
+
+    function syncFromLocalStorage() {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      if (Array.isArray(saved) && saved.length) {
+        reservations = saved.map(normalizeSheetRow);
+        renderTable();
+      }
+    }
+
+    function normalizeSheetRow(item) {
+      const guestsValue = Number(item.guests || '4');
+      return {
+        name: item.name || 'Pelanggan',
+        time: item.time || '12:30',
+        guests: Number.isFinite(guestsValue) ? guestsValue : 4,
+        occasion: item.occasion || 'Reservasi',
+        status: item.status || 'Pending',
+        date: item.date || '',
+        phone: item.phone || '',
+        notes: item.notes || ''
+      };
+    }
+
+    async function loadReservationsFromSheet() {
+      if (!SHEET_WEBAPP_URL || SHEET_WEBAPP_URL.includes('PASTE_URL')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(SHEET_WEBAPP_URL, { method: 'GET', mode: 'cors' });
+        if (!response.ok) throw new Error('Gagal mengambil data');
+
+        const data = await response.json();
+        if (!Array.isArray(data) || !data.length) return;
+
+        reservations = data.map(normalizeSheetRow);
+        localStorage.setItem(storageKey, JSON.stringify(reservations));
+      } catch (error) {
+        console.warn('Google Sheet belum aktif atau gagal dibaca:', error);
+      }
+    }
+
+    function saveReservations() {
+      localStorage.setItem(storageKey, JSON.stringify(reservations));
+      localStorage.setItem('velvetReservationsUpdatedAt', Date.now());
+    }
+
+    function getStatusClass(status) {
+      if (status === 'Confirmed') return 'confirmed';
+      if (status === 'Pending') return 'pending';
+      return 'canceled';
+    }
+
+    function renderStats() {
+      const activeReservations = reservations.filter(item => item.status !== 'Canceled');
+      const totalGuestCount = activeReservations.reduce((sum, item) => sum + Number(item.guests || 0), 0);
+      const totalSeats = 25;
+      const availableSeats = Math.max(0, totalSeats - totalGuestCount);
+      const occupancyPercent = Math.min(100, Math.round((totalGuestCount / totalSeats) * 100));
+      const pendingCount = reservations.filter(item => item.status === 'Pending').length;
+      const confirmedCount = reservations.filter(item => item.status === 'Confirmed').length;
+      const avgGuests = activeReservations.length ? Math.round(totalGuestCount / activeReservations.length) : 0;
+
+      document.getElementById('totalReservations').textContent = reservations.length;
+      document.getElementById('availableSeats').textContent = availableSeats;
+      document.getElementById('pendingConfirm').textContent = pendingCount;
+      document.getElementById('occupancyPercent').textContent = occupancyPercent + '%';
+      document.getElementById('todayCount').textContent = reservations.length;
+      document.getElementById('confirmedCount').textContent = confirmedCount;
+      document.getElementById('avgGuests').textContent = avgGuests;
+      document.getElementById('usedSeatsLabel').textContent = `${totalGuestCount}/${totalSeats} terisi`;
+      document.getElementById('occupancyLabel').textContent = occupancyPercent + '%';
+      document.getElementById('occupancyFill').style.width = occupancyPercent + '%';
+
+      if (occupancyPercent >= 80) {
+        document.getElementById('occupancySummary').textContent = 'Lokasi dalam kondisi ramai. Disarankan menyiapkan meja cadangan.';
+      } else if (occupancyPercent >= 50) {
+        document.getElementById('occupancySummary').textContent = 'Lokasi sedang cukup ramai, terutama di jam sibuk.';
+      } else {
+        document.getElementById('occupancySummary').textContent = 'Lokasi saat ini masih dalam kondisi normal.';
+      }
+    }
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+
+      reservations.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td data-label="Nama">${item.name}</td>
+          <td data-label="Waktu">${item.time}</td>
+          <td data-label="Orang">${item.guests} Orang</td>
+          <td data-label="Acara">${item.occasion}</td>
+          <td data-label="Status"><span class="status ${getStatusClass(item.status)}">${item.status}</span></td>
+          <td data-label="Aksi">
+            <div class="action-group">
+              <button class="mini-btn confirm" data-index="${index}" data-action="confirm">Confirm</button>
+              <button class="mini-btn pending" data-index="${index}" data-action="pending">Pending</button>
+              <button class="mini-btn cancel" data-index="${index}" data-action="cancel">Cancel</button>
+              <button class="mini-btn delete" data-index="${index}" data-action="delete">Delete</button>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      renderStats();
+    }
+
+    tableBody.addEventListener('click', function (event) {
+      const button = event.target.closest('button');
+      if (!button) return;
+
+      const index = Number(button.dataset.index);
+      const action = button.dataset.action;
+
+      if (action === 'confirm') reservations[index].status = 'Confirmed';
+      if (action === 'pending') reservations[index].status = 'Pending';
+      if (action === 'cancel') reservations[index].status = 'Canceled';
+      if (action === 'delete') reservations.splice(index, 1);
+
+      saveReservations();
+      renderTable();
+    });
+
+    reservationForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const name = document.getElementById('newName').value.trim();
+      const guests = document.getElementById('newGuests').value;
+      const time = document.getElementById('newTime').value;
+      const occasion = document.getElementById('newOccasion').value.trim();
+      const status = document.getElementById('newStatus').value;
+
+      if (!name || !time || !occasion) return;
+
+      reservations.unshift({
+        name,
+        guests: Number(guests),
+        time,
+        occasion,
+        status
+      });
+
+      saveReservations();
+      reservationForm.reset();
+      document.getElementById('newGuests').value = '4';
+      document.getElementById('newStatus').value = 'Confirmed';
+      document.getElementById('newOccasion').value = 'Meeting ringan';
+      renderTable();
+    });
+
+    function updateHeaderState() {
+      const currentScrollY = window.scrollY;
+      const isCompact = currentScrollY > 12;
+      const isScrollingDown = currentScrollY > lastScrollY && currentScrollY > 20;
+      const atTop = currentScrollY <= 8;
+
+      if (topbar) {
+        topbar.classList.toggle('compact', isCompact);
+        topbar.classList.toggle('hidden', !atTop && isScrollingDown);
+      }
+
+      lastScrollY = currentScrollY;
+    }
+
+    logoutBtn.addEventListener('click', function () {
+      localStorage.removeItem(sessionKey);
+      window.location.href = 'admin-login.html';
+    });
+
+    window.addEventListener('scroll', updateHeaderState, { passive: true });
+    window.addEventListener('resize', updateHeaderState);
+
+    window.addEventListener('storage', function (event) {
+      if (event.key === storageKey || event.key === 'velvetReservationsUpdatedAt') {
+        syncFromLocalStorage();
+      }
+    });
+
+    async function initAdmin() {
+      const localData = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      if (Array.isArray(localData) && localData.length) {
+        reservations = localData.map(normalizeSheetRow);
+      }
+
+      await loadReservationsFromSheet();
+      renderTable();
+      updateHeaderState();
+    }
+
+    initAdmin();
+  </script>
+</body>
+</html>

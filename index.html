@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velvet Brew Cafe | Reservasi Meja & Kopi Hangat</title>
+  <style>
+    :root {
+      --bg: #f6efe8;
+      --bg-soft: #fffaf5;
+      --panel: #fffdfb;
+      --primary: #7d3f2a;
+      --primary-dark: #512d1f;
+      --accent: #d8a36b;
+      --accent-soft: #f7e1c1;
+      --brown: #3e2b25;
+      --text: #2a201d;
+      --muted: #6a524c;
+      --line: #eadbcc;
+      --shadow: 0 22px 48px rgba(61, 33, 25, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #fffaf5 0%, #f7efe9 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    button, input, select, textarea { font: inherit; }
+
+    .container {
+      width: min(1180px, calc(100% - 30px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 250, 245, 0.82);
+      border-bottom: 1px solid rgba(234, 219, 204, 0.9);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translateY(0);
+    }
+
+    .topbar.compact {
+      background: rgba(255, 248, 242, 0.96);
+      border-bottom-color: rgba(214, 194, 180, 0.8);
+      box-shadow: 0 8px 18px rgba(54, 34, 28, 0.05);
+    }
+
+    .topbar.hidden {
+      transform: translateY(-112%);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      transition: padding 0.25s ease;
+    }
+
+    .topbar.compact .nav {
+      padding: 10px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--brown);
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), #a55d34);
+      color: white;
+      font-weight: 800;
+      transition: width 0.25s ease, height 0.25s ease;
+    }
+
+    .topbar.compact .brand-mark {
+      width: 34px;
+      height: 34px;
+      font-size: 0.85rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      color: var(--muted);
+      font-weight: 700;
+      transition: gap 0.25s ease, font-size 0.25s ease;
+    }
+
+    .topbar.compact .nav-links {
+      gap: 18px;
+      font-size: 0.95rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 13px 22px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease, padding 0.25s ease, font-size 0.25s ease;
+    }
+
+    .topbar.compact .btn {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #9f522f);
+      color: white;
+      box-shadow: 0 16px 26px rgba(125, 63, 42, 0.2);
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100%;
+      padding-top: 4px;
+      max-width: 560px;
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--primary);
+    }
+
+    .hero {
+      padding: 22px 0 12px;
+    }
+
+    .hero-wrap {
+      display: grid;
+      grid-template-columns: 1.06fr 0.94fr;
+      gap: 22px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--primary-dark);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      margin-bottom: 10px;
+      width: fit-content;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2.15rem, 4vw, 4rem);
+      line-height: 0.96;
+      letter-spacing: -0.06em;
+      color: var(--brown);
+    }
+
+    .lead {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 0.98rem;
+      max-width: 500px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .meta-row strong {
+      display: block;
+      color: var(--text);
+      font-size: 1.2rem;
+      margin-bottom: 3px;
+    }
+
+    .hero-visual {
+      min-height: 360px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      background: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+      box-shadow: var(--shadow);
+    }
+
+    .floating-card {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: min(220px, 72%);
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(234,219,204,0.9);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .floating-card .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--primary);
+      font-size: 0.68rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .floating-card h3 {
+      margin: 0 0 6px;
+      color: var(--brown);
+      font-size: 1.1rem;
+    }
+
+    .floating-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .floating-list strong {
+      display: block;
+      color: var(--text);
+      font-size: 0.92rem;
+      margin-bottom: 2px;
+    }
+
+    section {
+      padding: 20px 0 18px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      letter-spacing: -0.05em;
+      color: var(--brown);
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .menu-grid,
+    .feature-grid,
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .slider-shell {
+      position: relative;
+    }
+
+    .slider-track {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(290px, 1fr);
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 10px;
+    }
+
+    .slider-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .slider-card {
+      scroll-snap-align: start;
+    }
+
+    .slider-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .slider-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slider-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .slider-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(61, 33, 25, 0.08);
+    }
+
+    .slider-dots {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(125, 63, 42, 0.18);
+      transition: all 0.2s ease;
+    }
+
+    .slider-dot.active {
+      width: 26px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .menu-card,
+    .feature-card,
+    .testimonial,
+    .reservation-box,
+    .booking-summary {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 12px 28px rgba(63, 35, 27, 0.04);
+    }
+
+    .menu-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .menu-sidebar {
+      background: linear-gradient(180deg, #fffaf5 0%, #f6efe7 100%);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 12px 28px rgba(61, 33, 25, 0.04);
+    }
+
+    .menu-sidebar h3 {
+      margin: 0 0 16px;
+      color: var(--brown);
+      font-size: 1.5rem;
+    }
+
+    .menu-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .menu-item img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 14px;
+      flex-shrink: 0;
+    }
+
+    .menu-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .menu-item-info h4 {
+      margin: 0 0 4px;
+      color: var(--brown);
+      font-size: 1.05rem;
+    }
+
+    .menu-item-info p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .menu-item-price {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      display: none;
+    }
+
+    .menu-card {
+      overflow: hidden;
+    }
+
+    .menu-card img {
+      width: 100%;
+      height: 228px;
+      object-fit: cover;
+    }
+
+    .menu-body {
+      padding: 18px 18px 20px;
+    }
+
+    .menu-body h3 {
+      margin: 0 0 8px;
+      color: var(--brown);
+      font-size: 1.45rem;
+    }
+
+    .menu-body p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .menu-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .price {
+      font-size: 1.2rem;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #f3ebdf;
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .reservation-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .reservation-box {
+      padding: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .booking-highlight {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(125, 63, 42, 0.06), rgba(216, 163, 107, 0.10));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+
+    .booking-highlight strong {
+      display: block;
+      color: var(--brown);
+      font-size: 0.94rem;
+    }
+
+    .booking-highlight span {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .booking-highlight .slot-badge {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--primary);
+      font-size: 0.7rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: var(--text);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: rgba(125, 63, 42, 0.5);
+      box-shadow: 0 0 0 4px rgba(125, 63, 42, 0.08);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(106, 82, 76, 0.55);
+    }
+
+    input[type="date"],
+    input[type="time"],
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 38px;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0.8;
+      cursor: pointer;
+      filter: brightness(0.6);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .booking-summary {
+      position: sticky;
+      top: 90px;
+      padding: 22px;
+      background: linear-gradient(180deg, #fffdfb 0%, #f9f0e6 100%);
+    }
+
+    .status-box {
+      background: rgba(255,255,255,0.68);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      margin-bottom: 18px;
+    }
+
+    .status-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .status-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 90px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+
+    .status-low {
+      background: #eaf6ee;
+      border-color: #bfe3ca;
+      color: #1f6d42;
+    }
+
+    .status-medium {
+      background: #fff3dc;
+      border-color: #f1d38e;
+      color: #9a6311;
+    }
+
+    .status-high {
+      background: #fde9e5;
+      border-color: #f2b5a9;
+      color: #a33a2b;
+    }
+
+    .status-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .status-meta {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: 0.02em;
+    }
+
+    .booking-summary h3 {
+      margin: 0 0 16px;
+      color: var(--brown);
+      font-size: 1.8rem;
+    }
+
+    .summary-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--line);
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+
+    .summary-row strong {
+      color: var(--text);
+    }
+
+    .mini-cta {
+      background: linear-gradient(135deg, var(--primary), #9a4e2d);
+      color: white;
+      border-radius: 18px;
+      padding: 16px 18px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .policy-box {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .policy-box strong {
+      color: var(--primary-dark);
+    }
+
+    .summary-inline-card {
+      background: linear-gradient(135deg, rgba(125, 63, 42, 0.05), rgba(233, 204, 167, 0.14));
+      border: 1px solid rgba(125, 63, 42, 0.12);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    .summary-inline-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(125, 63, 42, 0.08);
+    }
+
+    .summary-inline-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(43, 28, 20, 0.7);
+    }
+
+    .summary-inline-badge {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(125, 63, 42, 0.12);
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 0.66rem;
+      font-weight: 800;
+    }
+
+    .summary-inline-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .summary-inline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(125, 63, 42, 0.08);
+    }
+
+    .summary-inline-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .summary-inline-value {
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-align: right;
+      max-width: 58%;
+      line-height: 1.35;
+    }
+
+    .feature-card {
+      padding: 22px;
+      min-height: 220px;
+    }
+
+    .icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent-soft), #f9e7d1);
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+      color: var(--brown);
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .testimonial {
+      padding: 22px;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stars {
+      letter-spacing: 3px;
+      color: #df9d43;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .testimonial p {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .customer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      color: var(--brown);
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #e7cca3, #d28f60);
+      color: var(--primary-dark);
+    }
+
+    footer {
+      background: #2c1e1a;
+      color: #f9eae2;
+      margin-top: 36px;
+      padding: 30px 0 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 0.8fr 0.7fr;
+      gap: 22px;
+    }
+
+    .mobile-nav {
+      display: none;
+      width: 100%;
+      margin-top: 8px;
+      background: rgba(45, 28, 25, 0.92);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 6px 8px;
+      box-shadow: 0 12px 26px rgba(34, 22, 18, 0.18);
+      opacity: 1;
+      transition: opacity 0.26s ease, transform 0.26s ease, margin 0.26s ease, padding 0.26s ease;
+    }
+
+    .mobile-nav.hidden {
+      opacity: 0;
+      transform: translateY(-12px);
+      margin-top: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-width: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .mobile-nav-inner {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .mobile-nav a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: rgba(249, 234, 226, 0.8);
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: 10px;
+      line-height: 1.1;
+    }
+
+    .mobile-nav a.active {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .footer-brand {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 10px;
+    }
+
+    .footer-grid p,
+    .footer-grid li {
+      color: rgba(249, 234, 226, 0.8);
+    }
+
+    .footer-grid ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-wrap,
+      .feature-grid,
+      .testimonial-grid,
+      .reservation-wrap,
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero-wrap,
+      .reservation-wrap,
+      .menu-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      #visit-us .feature-grid {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        padding: 4px 4px 10px;
+        margin: 0 -4px;
+      }
+
+      #visit-us .feature-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      #visit-us .feature-card {
+        flex: 0 0 82%;
+        min-height: 220px;
+        scroll-snap-align: start;
+      }
+
+      #visit-us .section-head {
+        margin-bottom: 16px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav-links,
+      .nav-actions {
+        display: none;
+      }
+
+      .mobile-nav {
+        display: block;
+      }
+
+      .nav {
+        padding: 12px 0 0;
+        flex-wrap: wrap;
+      }
+
+      .topbar.compact .nav {
+        padding-top: 10px;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .feature-grid,
+      .testimonial-grid,
+      .form-grid,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 10px;
+        padding-bottom: 8px;
+      }
+
+      .hero-copy {
+        max-width: none;
+        padding-top: 0;
+      }
+
+      .eyebrow {
+        margin-bottom: 8px;
+        font-size: 0.58rem;
+        padding: 5px 8px;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+        line-height: 1.02;
+      }
+
+      .lead {
+        font-size: 0.84rem;
+        margin-bottom: 12px;
+      }
+
+      .section-head {
+        margin-bottom: 12px;
+      }
+
+      .section-head h2 {
+        font-size: 1.7rem;
+      }
+
+      .lead {
+        font-size: 0.9rem;
+        margin-bottom: 14px;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 11px 14px;
+      }
+
+      .meta-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px 10px;
+        font-size: 0.68rem;
+      }
+
+      .hero-visual {
+        min-height: 220px;
+      }
+
+      .meta-row strong {
+        font-size: 1rem;
+        margin-bottom: 2px;
+      }
+
+      .hero-visual {
+        min-height: 240px;
+      }
+
+      .floating-card {
+        right: 10px;
+        bottom: 10px;
+        width: min(180px, 72%);
+        padding: 10px;
+      }
+
+      .floating-card h3 {
+        font-size: 0.96rem;
+      }
+
+      .floating-list {
+        gap: 6px;
+        font-size: 0.6rem;
+      }
+
+      .floating-list strong {
+        font-size: 0.8rem;
+      }
+
+      .menu-layout,
+      .reservation-wrap {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .menu-list {
+        gap: 10px;
+      }
+
+      .menu-sidebar {
+        padding: 14px;
+      }
+
+      .menu-item {
+        padding: 10px;
+      }
+
+      .menu-item img {
+        width: 56px;
+        height: 56px;
+      }
+
+      .menu-item-info h4 {
+        font-size: 0.9rem;
+      }
+
+      .menu-item-price {
+        font-size: 0.76rem;
+      }
+
+      .menu-card img {
+        height: 180px;
+      }
+
+      .menu-body {
+        padding: 14px 14px 16px;
+      }
+
+      .menu-body h3 {
+        font-size: 1.2rem;
+      }
+
+      .price {
+        font-size: 1rem;
+      }
+
+      .tag {
+        padding: 6px 8px;
+        font-size: 0.66rem;
+      }
+
+      .reservation-box {
+        padding: 14px 12px 16px;
+      }
+
+      .booking-highlight {
+        padding: 10px 12px;
+        margin-bottom: 12px;
+      }
+
+      .booking-highlight strong {
+        font-size: 0.82rem;
+      }
+
+      .booking-highlight span {
+        font-size: 0.68rem;
+      }
+
+      .booking-highlight .slot-badge {
+        font-size: 0.62rem;
+        padding: 6px 8px;
+      }
+
+      .booking-summary {
+        position: static;
+        padding: 18px 16px;
+        border-radius: 20px;
+      }
+
+      .status-box {
+        padding: 12px 12px 10px;
+      }
+
+      .summary-row {
+        display: grid;
+        grid-template-columns: minmax(70px, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.8rem;
+      }
+
+      .summary-row strong {
+        text-align: right;
+      }
+
+      .status-head {
+        margin-bottom: 6px;
+      }
+
+      .status-pill {
+        min-width: 80px;
+        padding: 6px 8px;
+        font-size: 0.7rem;
+      }
+
+      .status-box p,
+      .status-meta,
+      .policy-box {
+        font-size: 0.74rem;
+      }
+
+      .booking-summary h3 {
+        font-size: 1.4rem;
+      }
+
+      .summary-row {
+        font-size: 0.82rem;
+      }
+
+      .mini-cta {
+        padding: 12px 14px;
+        font-size: 0.82rem;
+      }
+
+      .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <div class="brand-mark">V</div>
+        <span>Velvet Brew</span>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#reserve">Reservasi</a>
+        <a href="#reviews">Ulasan</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="#reserve" class="btn btn-primary" style="display:inline-flex; align-items:center; justify-content:center;">Booking Meja</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="mobile-nav" aria-label="Navigasi mobile">
+        <div class="mobile-nav-inner">
+          <a href="#home" class="active">🏠<span>Home</span></a>
+          <a href="#reserve">🗓️<span>Reservasi</span></a>
+          <a href="https://wa.me/6281234567890?text=Halo%20Velvet%20Brew%2C%20saya%20membutuhkan%20bantuan." target="_blank" rel="noopener noreferrer">💬<span>Bantuan</span></a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container hero-wrap">
+        <div class="hero-copy">
+          <span class="eyebrow">Coffeehouse Experience</span>
+          <h1>Rasakan kopi hangat, meja nyaman, dan waktu yang punya makna.</h1>
+          <p class="lead">Velvet Brew menghadirkan suasana santai untuk meeting ringan, date night, dan hangout bersama teman dengan pelayanan yang cepat dan personal.</p>
+
+          <div class="hero-actions">
+            <a href="#reserve" class="btn btn-primary">Reservasi Sekarang</a>
+            <a href="#reviews" class="btn btn-secondary">Lihat Ulasan</a>
+          </div>
+
+          <div class="meta-row">
+            <div>
+              <strong>25+</strong>
+              Meja siap pakai
+            </div>
+            <div>
+              <strong>4.9/5</strong>
+              Rating pelanggan
+            </div>
+            <div>
+              <strong>15 min</strong>
+              Proses booking
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="floating-card">
+            <div class="badge">Promo Hari Ini</div>
+            <h3>Weekend Latte</h3>
+            <div style="color: var(--muted);">Cappuccino + Croissant</div>
+            <div class="floating-list">
+              <div>
+                <strong>25</strong>
+                Meja
+              </div>
+              <div>
+                <strong>4.9</strong>
+                Rating
+              </div>
+              <div>
+                <strong>Rp 45K</strong>
+                Mulai
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reserve">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Reservasi meja</h2>
+            <p>Isi detail booking Anda dan kami akan menyiapkan tempat yang ideal untuk Anda.</p>
+          </div>
+        </div>
+
+        <div class="reservation-wrap">
+          <div class="reservation-box">
+            <div class="booking-highlight" aria-live="polite">
+              <div>
+                <strong>Slot terpilih</strong>
+                <span id="selectedSlotText">Hari ini · 12:30 · 4 Orang</span>
+              </div>
+              <div class="slot-badge" id="selectedSlotBadge">Ready</div>
+            </div>
+
+            <form id="bookingForm">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="name">Nama lengkap</label>
+                  <input id="name" type="text" value="" placeholder="Contoh: Aisha Rahma" />
+                </div>
+
+                <div class="field">
+                  <label for="phone">Nomor WhatsApp</label>
+                  <input id="phone" type="tel" value="" placeholder="Contoh: 0812 3456 7890" />
+                </div>
+
+                <div class="field">
+                  <label for="date">Tanggal</label>
+                  <input id="date" type="text" value="" placeholder="YYYY-MM-DD" inputmode="numeric" />
+                  <small style="color: rgba(106, 82, 76, 0.72); font-size: 0.68rem; margin-top: -4px;">Format yang benar: YYYY-MM-DD</small>
+                </div>
+
+                <div class="field">
+                  <label for="time">Jam</label>
+                  <input id="time" type="text" value="" placeholder="HH:MM" inputmode="numeric" />
+                  <small style="color: rgba(106, 82, 76, 0.72); font-size: 0.68rem; margin-top: -4px;">Format yang benar: HH:MM</small>
+                </div>
+
+                <div class="field">
+                  <label for="guests">Jumlah orang</label>
+                  <input id="guests" type="text" value="" placeholder="Contoh: 4 Orang" />
+                  <small style="color: rgba(106, 82, 76, 0.72); font-size: 0.68rem; margin-top: -4px;">Contoh: 2 Orang, 4 Orang, 6 Orang</small>
+                </div>
+
+                <div class="field">
+                  <label for="occasion">Acara</label>
+                  <input id="occasion" type="text" value="" placeholder="Contoh: Meeting ringan" />
+                  <small style="color: rgba(106, 82, 76, 0.72); font-size: 0.68rem; margin-top: -4px;">Contoh: Meeting ringan, Date night</small>
+                </div>
+
+                <div class="field full">
+                  <label for="notes">Catatan tambahan</label>
+                  <textarea id="notes" placeholder="Contoh: Meja dekat jendela, ingin suasana lebih tenang."></textarea>
+                </div>
+
+                <div class="field full" style="margin-top: -4px;">
+                  <div class="summary-inline-card">
+                    <div class="summary-inline-header">
+                      <div class="summary-inline-title">Ringkasan</div>
+                      <div class="summary-inline-badge">Live</div>
+                    </div>
+                    <div class="summary-inline-grid">
+                      <div class="summary-inline-row"><span class="summary-inline-label">Nama</span><strong class="summary-inline-value" id="summaryNameInline">Customer</strong></div>
+                      <div class="summary-inline-row"><span class="summary-inline-label">Tanggal</span><strong class="summary-inline-value" id="summaryDateInline">Tanggal belum dipilih</strong></div>
+                      <div class="summary-inline-row"><span class="summary-inline-label">Jam</span><strong class="summary-inline-value" id="summaryTimeInline">Waktu belum dipilih</strong></div>
+                      <div class="summary-inline-row"><span class="summary-inline-label">Jumlah</span><strong class="summary-inline-value" id="summaryGuestsInline">Jumlah belum dipilih</strong></div>
+                    </div>
+                  </div>
+
+                  <div class="status-box" aria-live="polite" style="margin-top: 14px;">
+                    <div class="status-head">
+                      <span class="status-label">Ketersediaan</span>
+                      <span id="occupancyStatus" class="status-pill status-low">Kosong</span>
+                    </div>
+                    <p id="occupancyText">Pilih waktu booking untuk melihat estimasi ketersediaan meja.</p>
+                    <div class="status-meta" id="statusMeta">25 meja tersedia</div>
+                  </div>
+                </div>
+
+                <div class="field full" style="margin-top: 4px;">
+                  <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.76rem; color: rgba(43, 28, 20, 0.72); line-height: 1.45; cursor: pointer; margin: 0;">
+                    <input id="confirmDataChecked" type="checkbox" style="margin-top: 2px; accent-color:#7a5140; width: 16px; height: 16px; flex-shrink: 0;" />
+                    <span>Saya memastikan data yang saya masukkan sudah benar.</span>
+                  </label>
+                </div>
+
+                <div class="field full" style="margin-top: 8px; display: grid; gap: 10px;">
+                  <button type="submit" class="btn btn-primary" style="width:100%;">Konfirmasi Reservasi</button>
+                  <a href="https://wa.me/6281234567890?text=Halo%20Velvet%20Brew%2C%20saya%20ingin%20bertanya%20tentang%20reservasi." target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width:100%; display:inline-flex; align-items:center; justify-content:center; text-align:center;">Chat WhatsApp</a>
+                </div>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="visit-us">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Kunjungi kami</h2>
+            <p>Datang lebih nyaman dengan informasi lengkap sebelum Anda hadir.</p>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="icon">📍</div>
+            <h3>Lokasi</h3>
+            <p>Jl. Cikini Raya No. 12, Jakarta Pusat<br />Dekat area pusat kota dan kawasan kuliner ramai.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="icon">🕘</div>
+            <h3>Jam Operasional</h3>
+            <p>Senin - Minggu<br />09.00 - 22.00 WIB</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="icon">💬</div>
+            <h3>Contact</h3>
+            <p>+62 812-3456-7890<br />hello@velvetbrew.id</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviews">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Yang pelanggan katakan</h2>
+            <p>Rasakan sendiri kenyamanan dan rasa kami.</p>
+          </div>
+        </div>
+
+        <div class="slider-shell">
+          <div class="slider-track testimonial-track">
+            <article class="slider-card testimonial">
+              <div class="stars">★★★★★</div>
+              <p>“Tempatnya cozy dan kopinya enak. Cocok untuk meeting ringan sekaligus santai.”</p>
+              <div class="customer">
+                <div class="avatar">A</div>
+                <span>Amel</span>
+              </div>
+            </article>
+
+            <article class="slider-card testimonial">
+              <div class="stars">★★★★★</div>
+              <p>“Suasana sangat nyaman. Reservasi cepat dan meja yang kami pilih sesuai keinginan.”</p>
+              <div class="customer">
+                <div class="avatar">R</div>
+                <span>Rizki</span>
+              </div>
+            </article>
+
+            <article class="slider-card testimonial">
+              <div class="stars">★★★★★</div>
+              <p>“Rasanya enak, pelayanannya ramah, dan cocok untuk hangout keluarga.”</p>
+              <div class="customer">
+                <div class="avatar">N</div>
+                <span>Nadia</span>
+              </div>
+            </article>
+
+            <article class="slider-card testimonial">
+              <div class="stars">★★★★★</div>
+              <p>“Cocok banget untuk nongkrong santai dengan teman, tempatnya tenang dan rapih.”</p>
+              <div class="customer">
+                <div class="avatar">D</div>
+                <span>Dimas</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="slider-nav">
+            <div class="slider-controls">
+              <button type="button" class="slider-btn prev" aria-label="Sebelumnya">‹</button>
+              <button type="button" class="slider-btn next" aria-label="Berikutnya">›</button>
+            </div>
+            <div class="slider-dots">
+              <span class="slider-dot active"></span>
+              <span class="slider-dot"></span>
+              <span class="slider-dot"></span>
+              <span class="slider-dot"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Kenapa memilih kami</h2>
+            <p>Suasana hangat, kopi berkualitas, dan pengalaman booking yang praktis.</p>
+          </div>
+        </div>
+
+        <div class="slider-shell">
+          <div class="slider-track feature-track">
+            <article class="slider-card feature-card">
+              <div class="icon">☕</div>
+              <h3>Kopi premium</h3>
+              <p>Kopi pilihan dengan rasa yang konsisten dan aroma yang menggoda.</p>
+            </article>
+
+            <article class="slider-card feature-card">
+              <div class="icon">🪑</div>
+              <h3>Meja nyaman</h3>
+              <p>Setiap sudut dibuat untuk kenyamanan Anda, dari meeting santai hingga hangout.</p>
+            </article>
+
+            <article class="slider-card feature-card">
+              <div class="icon">⚡</div>
+              <h3>Reservasi cepat</h3>
+              <p>Proses booking cepat, simpel, dan tidak membuat Anda menunggu lama.</p>
+            </article>
+
+            <article class="slider-card feature-card">
+              <div class="icon">✨</div>
+              <h3>Suasana hangat</h3>
+              <p>Desain cozy dengan sentuhan premium yang cocok untuk momen berkesan.</p>
+            </article>
+          </div>
+
+          <div class="slider-nav">
+            <div class="slider-controls">
+              <button type="button" class="slider-btn prev" aria-label="Sebelumnya">‹</button>
+              <button type="button" class="slider-btn next" aria-label="Berikutnya">›</button>
+            </div>
+            <div class="slider-dots">
+              <span class="slider-dot active"></span>
+              <span class="slider-dot"></span>
+              <span class="slider-dot"></span>
+              <span class="slider-dot"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="footer-brand">Velvet Brew</div>
+        <p>Tempat untuk menikmati kopi, brunch, dan momen hangat bersama teman, keluarga, atau rekan kerja.</p>
+      </div>
+
+      <div>
+        <h4>Kontak</h4>
+        <ul>
+          <li>Jl. Cikini Raya No. 12</li>
+          <li>+62 812-3456-7890</li>
+          <li>hello@velvetbrew.id</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Jelajahi</h4>
+        <ul>
+          <li><a href="#reserve">Reservasi</a></li>
+          <li><a href="#reviews">Ulasan</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Admin</h4>
+        <ul>
+          <li><a href="admin-login.html">Login Admin</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const SHEET_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwL6x1THPo3X4imCY7Rsa4vvzGxr8n01zbItbwoVkLwHAZS6gFWwXCdVsCxg4OL-6rv/exec'
+
+    const nameInput = document.getElementById('name');
+    const dateInput = document.getElementById('date');
+    const timeInput = document.getElementById('time');
+    const guestsInput = document.getElementById('guests');
+
+    function getTodayDateValue() {
+      const today = new Date();
+      const offset = today.getTimezoneOffset();
+      const localDate = new Date(today.getTime() - offset * 60000);
+      return localDate.toISOString().slice(0, 10);
+    }
+
+    function normalizeDateString(value) {
+      if (!value) return '';
+      const trimmed = String(value).trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+      const match = trimmed.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+      if (match) {
+        const y = match[1];
+        const m = String(match[2]).padStart(2, '0');
+        const d = String(match[3]).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+      return trimmed;
+    }
+
+    function normalizeTimeString(value) {
+      if (!value) return '';
+      const trimmed = String(value).trim();
+      const match = trimmed.match(/(\d{1,2}):(\d{2})/);
+      if (match) {
+        const hour = Math.min(23, Number(match[1]));
+        const minute = Math.min(59, Number(match[2]));
+        return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      }
+      return trimmed;
+    }
+
+    function normalizeGuestsValue(value) {
+      const trimmed = String(value || '').trim();
+      if (!trimmed) return '';
+      const match = trimmed.match(/\d+/);
+      if (match) return `${match[0]} Orang`;
+      return trimmed;
+    }
+
+    function initReservationDefaults() {
+      // Field remains empty by default to match the requested UX.
+      // The form only shows soft placeholders and does not auto-fill values.
+    }
+
+    function formatDate(value) {
+      const cleanValue = normalizeDateString(value);
+      if (!cleanValue) return 'Tanggal belum dipilih';
+      const date = new Date(cleanValue + 'T00:00:00');
+      if (Number.isNaN(date.getTime())) return cleanValue || 'Tanggal belum format';
+      return date.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    function adjustDateByStep(step) {
+      const raw = dateInput.value || getTodayDateValue();
+      const current = new Date(raw + 'T12:00:00');
+      current.setDate(current.getDate() + step);
+      dateInput.value = current.toISOString().slice(0, 10);
+      updateSummary();
+    }
+
+    function adjustTimeByStep(step) {
+      const currentList = (timeInput.value || '12:30').split(':');
+      let minutes = Number(currentList[0]) * 60 + Number(currentList[1]);
+      const minMinutes = 10 * 60;
+      const maxMinutes = 22 * 60;
+      const stepMinutes = 30;
+
+      minutes = Math.min(maxMinutes, Math.max(minMinutes, minutes + step * stepMinutes));
+      const hour = String(Math.floor(minutes / 60)).padStart(2, '0');
+      const minute = String(minutes % 60).padStart(2, '0');
+      timeInput.value = `${hour}:${minute}`;
+      updateSummary();
+    }
+
+    function bindWheelPicker(input, type) {
+      input.addEventListener('wheel', function (event) {
+        event.preventDefault();
+        const delta = event.deltaY > 0 ? 1 : -1;
+        if (type === 'date') {
+          adjustDateByStep(delta);
+        } else if (type === 'time') {
+          adjustTimeByStep(delta);
+        }
+      }, { passive: false });
+    }
+
+    function updateSelectedSlotDisplay() {
+      const dateValue = normalizeDateString(dateInput.value);
+      const timeValue = normalizeTimeString(timeInput.value);
+      const guestValue = normalizeGuestsValue(guestsInput.value);
+      const todayLabel = dateValue ? new Date(dateValue + 'T00:00:00') : null;
+      const isToday = !!todayLabel && !Number.isNaN(todayLabel.getTime()) && todayLabel.toDateString() === new Date(getTodayDateValue() + 'T00:00:00').toDateString();
+
+      const selectedSlotText = document.getElementById('selectedSlotText');
+      const selectedSlotBadge = document.getElementById('selectedSlotBadge');
+
+      if (selectedSlotText) {
+        if (!dateValue && !timeValue && !guestValue) {
+          selectedSlotText.textContent = 'Pilih tanggal, jam, dan jumlah orang';
+        } else {
+          const formattedDate = dateValue ? (isToday ? 'Hari ini' : formatDate(dateValue)) : 'Tanggal belum dipilih';
+          const formattedTime = timeValue || 'Jam belum dipilih';
+          const formattedGuest = guestValue || 'Jumlah belum dipilih';
+          selectedSlotText.textContent = `${formattedDate} · ${formattedTime} · ${formattedGuest}`;
+        }
+      }
+
+      if (selectedSlotBadge) {
+        selectedSlotBadge.textContent = 'Ready';
+      }
+    }
+
+    const occupancyStatus = document.getElementById('occupancyStatus');
+    const occupancyText = document.getElementById('occupancyText');
+    const statusMeta = document.getElementById('statusMeta');
+
+    function getGuestCount(value) {
+      const match = (value || '4 Orang').match(/\d+/);
+      return match ? Number(match[0]) : 4;
+    }
+
+    function validateBookingForm() {
+      const name = nameInput.value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const date = normalizeDateString(dateInput.value);
+      const time = normalizeTimeString(timeInput.value);
+      const guests = normalizeGuestsValue(guestsInput.value);
+      const occasion = document.getElementById('occasion').value.trim();
+
+      if (!name) {
+        alert('Silakan isi nama lengkap Anda terlebih dahulu.');
+        nameInput.focus();
+        return false;
+      }
+
+      if (!phone || phone.replace(/\D/g, '').length < 10) {
+        alert('Nomor WhatsApp tidak valid. Masukkan minimal 10 digit nomor aktif.');
+        document.getElementById('phone').focus();
+        return false;
+      }
+
+      if (!date) {
+        alert('Silakan pilih tanggal reservasi.');
+        dateInput.focus();
+        return false;
+      }
+
+      if (!time) {
+        alert('Silakan pilih jam reservasi.');
+        timeInput.focus();
+        return false;
+      }
+
+      if (!guests || !/\d+/.test(guests)) {
+        alert('Silakan pilih jumlah orang untuk reservasi.');
+        guestsInput.focus();
+        return false;
+      }
+
+      if (!occasion) {
+        alert('Silakan isi jenis acara atau kebutuhan reservasi Anda.');
+        document.getElementById('occasion').focus();
+        return false;
+      }
+
+      const selectedDate = new Date(`${date}T12:00:00`);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        alert('Tanggal reservasi tidak bisa kurang dari hari ini.');
+        dateInput.focus();
+        return false;
+      }
+
+      return true;
+    }
+
+    function getOccupancyState(value, guestsValue) {
+      const time = value || '12:30';
+      const hour = Number(time.split(':')[0]);
+      const guestCount = getGuestCount(guestsValue);
+      let bookedSeats = 8;
+
+      if (hour >= 10) bookedSeats = 10;
+      if (hour >= 11) bookedSeats = 12;
+      if (hour >= 13) bookedSeats = 14;
+      if (hour >= 15) bookedSeats = 18;
+      if (hour >= 17) bookedSeats = 21;
+      if (hour >= 19) bookedSeats = 24;
+      if (hour >= 21) bookedSeats = 25;
+
+      if (guestCount >= 6) bookedSeats += 2;
+      if (guestCount >= 8) bookedSeats += 3;
+
+      const totalSeats = 25;
+      const availableSeats = Math.max(0, totalSeats - bookedSeats);
+
+      if (availableSeats >= 12) {
+        return {
+          label: 'Kosong',
+          text: `Waktu ${time} masih santai, masih banyak meja yang tersedia untuk Anda.`,
+          className: 'status-low',
+          meta: `${availableSeats} dari ${totalSeats} meja tersedia`
+        };
+      }
+
+      if (availableSeats >= 6) {
+        return {
+          label: 'Cukup sepi',
+          text: `Waktu ${time} cukup tenang, namun beberapa meja favorit mulai diburu.`,
+          className: 'status-low',
+          meta: `${availableSeats} dari ${totalSeats} meja tersedia`
+        };
+      }
+
+      if (availableSeats >= 2) {
+        return {
+          label: 'Mulai ramai',
+          text: `Waktu ${time} mulai ramai, sebaiknya reservasi lebih cepat agar meja tetap tersedia.`,
+          className: 'status-medium',
+          meta: `${availableSeats} dari ${totalSeats} meja tersedia`
+        };
+      }
+
+      return {
+        label: 'Penuh',
+        text: `Waktu ${time} kemungkinan sudah penuh, cek ulang sebelum datang agar tidak kecewa.`,
+        className: 'status-high',
+        meta: `0 dari ${totalSeats} meja tersedia`
+      };
+    }
+
+    function updateSummary() {
+      const normalizedDate = normalizeDateString(dateInput.value);
+      const normalizedTime = normalizeTimeString(timeInput.value);
+      const normalizedGuests = normalizeGuestsValue(guestsInput.value);
+
+      dateInput.value = normalizedDate;
+      timeInput.value = normalizedTime;
+      guestsInput.value = normalizedGuests;
+
+      const summaryName = nameInput.value.trim() || 'Customer';
+      const summaryDateText = formatDate(normalizedDate);
+      const summaryTimeText = normalizedTime || 'Waktu belum dipilih';
+      const summaryGuestsText = normalizedGuests || 'Jumlah belum dipilih';
+
+      const summaryNameEl = document.getElementById('summaryName');
+      const summaryDateEl = document.getElementById('summaryDate');
+      const summaryTimeEl = document.getElementById('summaryTime');
+      const summaryGuestsEl = document.getElementById('summaryGuests');
+
+      if (summaryNameEl) summaryNameEl.textContent = summaryName;
+      if (summaryDateEl) summaryDateEl.textContent = summaryDateText;
+      if (summaryTimeEl) summaryTimeEl.textContent = summaryTimeText;
+      if (summaryGuestsEl) summaryGuestsEl.textContent = summaryGuestsText;
+
+      const inlineName = document.getElementById('summaryNameInline');
+      const inlineDate = document.getElementById('summaryDateInline');
+      const inlineTime = document.getElementById('summaryTimeInline');
+      const inlineGuests = document.getElementById('summaryGuestsInline');
+
+      if (inlineName) inlineName.textContent = summaryName;
+      if (inlineDate) inlineDate.textContent = summaryDateText;
+      if (inlineTime) inlineTime.textContent = summaryTimeText;
+      if (inlineGuests) inlineGuests.textContent = summaryGuestsText;
+
+      updateSelectedSlotDisplay();
+
+      const state = getOccupancyState(normalizedTime || '12:30', normalizedGuests || '4 Orang');
+
+      if (occupancyStatus) {
+        occupancyStatus.textContent = state.label;
+        occupancyStatus.className = `status-pill ${state.className}`;
+      }
+
+      if (occupancyText) occupancyText.textContent = state.text;
+      if (statusMeta) statusMeta.textContent = state.meta;
+    }
+
+    initReservationDefaults();
+    bindWheelPicker(dateInput, 'date');
+    bindWheelPicker(timeInput, 'time');
+
+    [nameInput, dateInput, timeInput, guestsInput].forEach(field => {
+      field.addEventListener('input', updateSummary);
+      field.addEventListener('change', updateSummary);
+    });
+
+    async function sendReservationToSheet(payload) {
+      if (!SHEET_WEBAPP_URL || SHEET_WEBAPP_URL.includes('PASTE_URL')) {
+        return { ok: false, skipped: true };
+      }
+
+      try {
+        const response = await fetch(SHEET_WEBAPP_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: payload.name,
+            phone: payload.phone,
+            date: payload.date,
+            time: payload.time,
+            guests: payload.guests,
+            occasion: payload.occasion,
+            notes: payload.notes,
+            status: 'Pending',
+            source: 'website'
+          })
+        });
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        return { ok: false, error: error.message };
+      }
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      if (!validateBookingForm()) {
+        return;
+      }
+
+      if (!document.getElementById('confirmDataChecked').checked) {
+        alert('Silakan centang peringatan bahwa data yang Anda masukkan sudah benar sebelum mengirim reservasi.');
+        return;
+      }
+
+      const name = nameInput.value || 'Customer';
+      const date = formatDate(dateInput.value);
+      const time = timeInput.value || 'Waktu belum dipilih';
+      const guests = guestsInput.value || 'Jumlah belum dipilih';
+
+      const payload = {
+        name: nameInput.value.trim() || 'Customer',
+        phone: document.getElementById('phone').value.trim().replace(/\D/g, ''),
+        date: normalizeDateString(dateInput.value),
+        time: normalizeTimeString(timeInput.value),
+        guests: normalizeGuestsValue(guestsInput.value),
+        occasion: document.getElementById('occasion').value.trim(),
+        notes: document.getElementById('notes').value.trim(),
+      };
+
+      const localKey = 'velvetReservations';
+      const saved = JSON.parse(localStorage.getItem(localKey) || '[]');
+      saved.unshift({
+        name: payload.name,
+        time: payload.time,
+        guests: Number((payload.guests || '4 Orang').match(/\d+/)?.[0] || 4),
+        occasion: payload.occasion,
+        status: 'Pending',
+        date: payload.date,
+        phone: payload.phone,
+        notes: payload.notes
+      });
+      localStorage.setItem(localKey, JSON.stringify(saved));
+      localStorage.setItem('velvetReservationsUpdatedAt', Date.now());
+
+      const sync = await sendReservationToSheet(payload);
+      const policyMessage = "\n\nKebijakan keterlambatan: jika datang lebih dari 30 menit dari jam reservasi, reservasi akan dinyatakan hangus.";
+
+      if (sync && sync.ok) {
+        alert(`Reservasi berhasil dibuat dan terkirim ke Google Sheet!\n\nNama: ${name}\nTanggal: ${date}\nJam: ${time}\nJumlah: ${guests}${policyMessage}\n\nTim kami akan mengirim konfirmasi melalui WhatsApp.`);
+      } else {
+        alert(`Reservasi berhasil dibuat di browser.\n\nNama: ${name}\nTanggal: ${date}\nJam: ${time}\nJumlah: ${guests}${policyMessage}\n\nCatatan: koneksi ke Google Sheet belum aktif, jadi data tersimpan lokal dulu.`);
+      }
+    });
+
+    document.querySelectorAll('.slider-shell').forEach((shell) => {
+      const track = shell.querySelector('.slider-track');
+      const prev = shell.querySelector('.slider-btn.prev');
+      const next = shell.querySelector('.slider-btn.next');
+      const dots = [...shell.querySelectorAll('.slider-dot')];
+
+      if (!track) return;
+
+      const getStep = () => {
+        const cards = [...track.children];
+        if (!cards.length) return 0;
+        const gap = Number.parseFloat(getComputedStyle(track).gap || '0');
+        return cards[0].getBoundingClientRect().width + gap;
+      };
+
+      const updateDots = () => {
+        const cards = [...track.children];
+        if (!cards.length) return;
+        const gap = Number.parseFloat(getComputedStyle(track).gap || '0');
+        const index = Math.min(
+          dots.length - 1,
+          Math.max(0, Math.round(track.scrollLeft / (cards[0].offsetWidth + gap)))
+        );
+
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === index);
+        });
+      };
+
+      prev?.addEventListener('click', () => {
+        track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+      });
+
+      next?.addEventListener('click', () => {
+        track.scrollBy({ left: getStep(), behavior: 'smooth' });
+      });
+
+      track.addEventListener('scroll', updateDots, { passive: true });
+      updateDots();
+    });
+
+    const topbar = document.querySelector('.topbar');
+    const mobileNav = document.querySelector('.mobile-nav');
+    let lastScrollY = window.scrollY;
+
+    function updateHeaderState() {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY;
+      const isCompact = currentScrollY > 10;
+      const isScrollingDown = delta > 4 && currentScrollY > 12;
+      const isScrollingUp = delta < -4 && currentScrollY > 12;
+      const atTop = currentScrollY <= 6;
+
+      if (topbar) {
+        topbar.classList.toggle('compact', isCompact);
+        if (atTop || isScrollingUp) {
+          topbar.classList.remove('hidden');
+        } else if (isScrollingDown) {
+          topbar.classList.add('hidden');
+        }
+      }
+
+      if (!mobileNav) return;
+
+      const isMobile = window.innerWidth <= 680;
+
+      if (!isMobile) {
+        mobileNav.classList.remove('hidden');
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      if (atTop || isScrollingUp) {
+        mobileNav.classList.remove('hidden');
+      } else if (isScrollingDown) {
+        mobileNav.classList.add('hidden');
+      }
+
+      lastScrollY = currentScrollY;
+    }
+
+    window.addEventListener('scroll', updateHeaderState, { passive: true });
+    window.addEventListener('resize', updateHeaderState);
+
+    updateSummary();
+    updateHeaderState();
+  </script>
+</body>
+</html>
